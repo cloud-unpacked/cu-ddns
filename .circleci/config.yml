@@ -1,0 +1,82 @@
+version: 2.1
+
+executors:
+  cibuilds:
+    docker:
+      - image: cibuilds/goreleaser:0.110
+
+workflows:
+  main:
+    jobs:
+      - test:
+          filters:
+            tags:
+              # Simplified SemVer regex
+              only: /^v\d+\.\d+\.\d+$/
+      - publish-main:
+          requires:
+            - test
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              # Simplified SemVer regex
+              only: /^v\d+\.\d+\.\d+$/
+      - publish-snap:
+          requires:
+            - publish-main
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              # Simplified SemVer regex
+              only: /^v\d+\.\d+\.\d+$/
+
+jobs:
+  test:
+    executor: cibuilds
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v1
+      - run:
+          name: "Download Dependancies"
+          command: cd src && go mod download
+      - run:
+          name: "Run Tests"
+          command: cd src && go test
+      - save_cache:
+          key: go-mod-v1
+          paths:
+            - "/go/pkg/mod"
+  publish-main:
+    executor: cibuilds
+    steps:
+      - checkout
+      - run:
+          name: "Build & Publish with GoReleaser"
+          command: cd src && goreleaser
+      - persist_to_workspace:
+          root: "src"
+          paths:
+            - "dist"
+  publish-snap:
+    docker:
+      - image: cibuilds/snapcraft:stable
+    steps:
+      - checkout
+      - attach_workspace:
+          at: src
+      - run:
+          name: "Build Snaps for Each Architecture"
+          command: |
+            snapcraft --target-arch=amd64 --destructive-mode
+            snapcraft --target-arch=armhf --destructive-mode
+      - run:
+          name: "Publish to Snap Store"
+          command: |
+            # Snapcraft Tokens are valid for 1 year. This one expires June 16th, 2020
+            echo $SNAPCRAFT_TOKEN | base64 --decode --ignore-garbage | snapcraft login --with -
+            snapcraft push *amd64.snap --release stable
+            snapcraft push *armhf.snap --release stable

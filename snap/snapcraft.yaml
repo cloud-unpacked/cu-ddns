@@ -1,0 +1,45 @@
+name: cu-ddns
+version: "v0.1.0"
+summary: "A Dynamic DNS client for VPS cloud providers."
+description: |
+  cu-ddns is a dynamic DNS client that uses VPS cloud providers such as Linode for DNS. This tool allows pointing a DNS hostname such as `home.example.com` to an IP address that may change regularly. The typical scenario is having a domain name point to your home IP address however those that travel a lot would find it useful as well.
+license: MIT
+base: core18
+grade: stable
+confinement: strict
+
+parts:
+  cu-ddns:
+    plugin: dump
+    source: .
+    override-build: |
+      snapcraftctl build
+
+      case $SNAPCRAFT_ARCH_TRIPLET in
+        # amd64
+        x86_64-linux-gnu)
+          cp src/dist/cu-ddns_linux_amd64/cu-ddns $SNAPCRAFT_PART_INSTALL
+          ;;
+        # armhf -> armv7 -> Raspberry Pi 2 B+ and newer
+        arm-linux-gnueabihf)
+          cp src/dist/cu-ddns_linux_arm_7/cu-ddns $SNAPCRAFT_PART_INSTALL
+          ;;
+        *)
+          echo "Unsupported architecture!"
+          exit 1
+      esac
+
+      chmod +x $SNAPCRAFT_PART_INSTALL/cu-ddns
+
+apps:
+  cu-ddns:
+    command: cu-ddns
+    plugs:
+      - network
+  daemon:
+    daemon: oneshot
+    command: cu-ddns run
+    plugs:
+      - network
+    passthrough:
+      timer: "00:00-24:00/48"

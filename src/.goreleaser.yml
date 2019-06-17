@@ -1,0 +1,36 @@
+project_name: cu-ddns
+env:
+  - CGO_ENABLED=0
+before:
+  hooks:
+    - go mod download
+builds:
+  -
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm
+    goarm:
+      - 7
+archives:
+  -
+    name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    files:
+      - ../LICENSE
+      - ../README.md
+nfpms:
+  -
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    vendor: "Cloud Unpacked"
+    homepage: "https://Feliciano.Tech"
+    maintainer: "Ricardo N Feliciano <Ricardo@Feliciano.Tech>"
+    description: "A Dynamic DNS client for VPS cloud providers."
+    license: MIT
+    formats:
+      - deb
+    dependencies:
+      - cron
+    recommends:
+      - systemd
+    bindir: /usr/bin
