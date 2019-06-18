@@ -26,11 +26,26 @@ The typical scenario is having a domain name point to your home IP address howev
 
 ## Installing
 
-Instructions coming soon.
+### Debian Package (.deb) Instructions
+
+Download the `.deb` file to the desired system.
+
+For graphical systems, you can download it from the [GitHub Releases page][gh-releases].
+Many distros allow you to double-click the file to install.
+Via terminal, you can do the following:
+
+```bash
+wget https://github.com/cloud-unpacked/cu-ddns/releases/download/v0.1.0/cu-ddns_0.1.0_amd64.deb
+sudo dpkg -i cu-ddns_0.1.0_amd64.deb
+```
+
+`0.1.0` and `amd64` may need to be replaced with your desired version and CPU architecture respectively.
 
 ### Linux Snap
 
 If you install via Snap, some commands will need to be prefixed with `sudo`.
+
+More instructions coming soon.
 
 
 ## Configuring
@@ -38,8 +53,8 @@ If you install via Snap, some commands will need to be prefixed with `sudo`.
 After installation, run the `configure` command to setup the client and the `start` command to start it running.
 
 ```bash
-cu-ddns configure
-cu-ddns start
+sudo cu-ddns configure
+sudo cu-ddns start
 ```
 
 
@@ -56,3 +71,7 @@ Currently, you can't specifically choose though. Whichever is the default route/
 
 This repository is licensed under the MIT license.
 The license can be found [here](./LICENSE).
+
+
+
+[gh-releases]: https://github.com/cloud-unpacked/cu-ddns/releases
