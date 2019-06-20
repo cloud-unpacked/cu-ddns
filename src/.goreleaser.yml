@@ -13,6 +13,9 @@ builds:
       - arm
     goarm:
       - 7
+
+    ldflags:
+      - -s -w -X github.com/cloud-unpacked/cu-ddns/cmd.version={{ .Version }}
 archives:
   -
     name_template: "{{ .ProjectName }}_{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
