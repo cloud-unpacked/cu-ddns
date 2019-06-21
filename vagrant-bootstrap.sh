@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
-apt-get update && apt-get upgrade -y
+# Having package update issues in Vagrant so skipping for now/
+#apt-get update && apt-get upgrade -y
 snap install --classic snapcraft
