@@ -71,6 +71,8 @@ jobs:
       - run:
           name: "Build Snaps for Each Architecture"
           command: |
+            # Generate a version file that Snapcraft can use
+            src/dist/cu-ddns_linux_amd64/cu-ddns version --short > VERSION
             snapcraft --target-arch=amd64 --destructive-mode
             snapcraft --target-arch=armhf --destructive-mode
       - run:
