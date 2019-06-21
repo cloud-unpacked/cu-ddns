@@ -1,5 +1,4 @@
 name: cu-ddns
-version: "v0.1.0"
 summary: "A Dynamic DNS client for VPS cloud providers."
 description: |
   cu-ddns is a dynamic DNS client that uses VPS cloud providers such as Linode for DNS. This tool allows pointing a DNS hostname such as `home.example.com` to an IP address that may change regularly. The typical scenario is having a domain name point to your home IP address however those that travel a lot would find it useful as well.
@@ -7,6 +6,7 @@ license: MIT
 base: core18
 grade: stable
 confinement: strict
+adopt-info: cu-ddns
 
 parts:
   cu-ddns:
@@ -30,6 +30,8 @@ parts:
       esac
 
       chmod +x $SNAPCRAFT_PART_INSTALL/cu-ddns
+
+      snapcraftctl set-version $($SNAPCRAFT_PART_INSTALL/cu-ddns version --short)
 
 apps:
   cu-ddns:
