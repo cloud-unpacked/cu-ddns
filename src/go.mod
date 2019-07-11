@@ -3,6 +3,7 @@ module github.com/cloud-unpacked/cu-ddns
 go 1.12
 
 require (
+	github.com/cloudflare/cloudflare-go v0.9.2
 	github.com/linode/linodego v0.9.0
 	github.com/spf13/cobra v0.0.4
 	github.com/spf13/viper v1.4.0

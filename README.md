@@ -24,6 +24,14 @@ The typical scenario is having a domain name point to your home IP address howev
 - Features
 
 
+## Providers
+
+`cu-ddns` supports the following providers:
+
+- Linode DNS
+- Cloudflare DNS
+
+
 ## Installing
 
 ### Debian Package (.deb) Instructions

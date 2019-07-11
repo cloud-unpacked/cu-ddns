@@ -28,30 +28,9 @@ This will configure:
 
 		for {
 
-			fmt.Println("Please paste a Linode Personal Access Token")
-			fmt.Print("for authentication: ")
-
-			passwdBytes, err := terminal.ReadPassword(0)
-			if err != nil {
-				fmt.Println("Error")
-			}
-
-			// Basic, almost useless validation
-			// For the record, Linode APIv4 tokens:
-			//    64chars
-			//    /[a-f0-9]{64}/
-			if len(string(passwdBytes)) == 64 {
-				viper.Set("providerToken", string(passwdBytes))
-				break
-			} else {
-				fmt.Println("The token is invalid. Try again.\n")
-			}
-		}
-
-		for {
-
 			fmt.Println("Please choose a provider:\n")
-			fmt.Println("[1] Linode DNS\n")
+			fmt.Println("[1] Linode DNS")
+			fmt.Println("[2] Cloudflare DNS\n")
 			fmt.Println("Enter the number of the provider [1]: ")
 
 			reader := bufio.NewReader(os.Stdin)
@@ -76,6 +55,10 @@ This will configure:
 				choiceValid = true
 				viper.Set("provider", "linode")
 				break
+			case 2:
+				choiceValid = true
+				viper.Set("provider", "cloudflare")
+				break
 			default:
 				fmt.Println("Not a valid option.")
 			}
@@ -83,6 +66,69 @@ This will configure:
 			if choiceValid {
 				break
 			}
+		}
+
+		for {
+
+			promptString := ""
+			switch viper.GetString("provider") {
+			case "linode":
+				promptString = "Linode Personal Access Token"
+				break
+			case "cloudflare":
+				promptString = "Cloudflare API key"
+				break
+			}
+
+			fmt.Println("Please paste a " + promptString)
+			fmt.Print("for authentication: ")
+
+			passwdBytes, err := terminal.ReadPassword(0)
+			if err != nil {
+				fmt.Println("Error")
+			}
+
+			// Disabling below for now as Cloudflare keys are different
+			// lengths from Linode keys.
+
+			// Basic, almost useless validation
+			// For the record, Linode APIv4 tokens:
+			//    64chars
+			//    /[a-f0-9]{64}/
+			//if len(string(passwdBytes)) == 64 {
+			if len(string(passwdBytes)) >= 10 {
+				viper.Set("providerToken", string(passwdBytes))
+				break
+			} else {
+				fmt.Println("The token is invalid. Try again.\n")
+			}
+		}
+
+		for {
+
+			if viper.GetString("provider") != "cloudflare" {
+				// Exit this loop. Only Cloudflare needs an email address.
+				break
+			}
+
+			fmt.Print("\nEnter your Cloudflare email address: ")
+
+			reader := bufio.NewReader(os.Stdin)
+			input, err := reader.ReadString('\n')
+			if err != nil {
+				fmt.Println("Error")
+			}
+
+			input = strings.TrimSpace(input)
+
+			if len(input) >= 5 {
+				viper.Set("providerEmail", input)
+				break
+			} else {
+				fmt.Println("The email is invalid. Try again.\n")
+				continue
+			}
+
 		}
 
 		for {

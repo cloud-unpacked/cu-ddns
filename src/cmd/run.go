@@ -10,6 +10,7 @@ import (
 
 	"golang.org/x/oauth2"
 
+	"github.com/cloudflare/cloudflare-go"
 	"github.com/linode/linodego"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -57,45 +58,78 @@ var runCmd = &cobra.Command{
 
 		dIP = string(body)
 
-		tokenSource := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: apiToken})
+		// Below starts provider specific code. In the future, this is an area
+		// where separating out into functions and likely interfaces will be
+		// useful.
 
-		oauth2Client := &http.Client{
-			Transport: &oauth2.Transport{
-				Source: tokenSource,
-			},
-		}
+		if viper.GetString("provider") == "linode" {
 
-		linodeClient := linodego.NewClient(oauth2Client)
-		//linodeClient.SetDebug(true)
+			tokenSource := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: apiToken})
 
-		domains, err := linodeClient.ListDomains(context.Background(), nil)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		for _, domain := range domains {
-
-			if domain.Domain == theDomain {
-				domainID = domain.ID
-				break
+			oauth2Client := &http.Client{
+				Transport: &oauth2.Transport{
+					Source: tokenSource,
+				},
 			}
-		}
 
-		records, err := linodeClient.ListDomainRecords(context.Background(), domainID, nil)
-		if err != nil {
-			fmt.Println("It was this.")
-			log.Fatal(err)
-		}
+			linodeClient := linodego.NewClient(oauth2Client)
+			//linodeClient.SetDebug(true)
 
-		for _, record := range records {
-
-			if record.Name == theHostname {
-				recordID = record.ID
-				break
+			domains, err := linodeClient.ListDomains(context.Background(), nil)
+			if err != nil {
+				log.Fatal(err)
 			}
-		}
 
-		_, err = linodeClient.UpdateDomainRecord(context.Background(), domainID, recordID, linodego.DomainRecordUpdateOptions{Target: dIP})
+			for _, domain := range domains {
+
+				if domain.Domain == theDomain {
+					domainID = domain.ID
+					break
+				}
+			}
+
+			records, err := linodeClient.ListDomainRecords(context.Background(), domainID, nil)
+			if err != nil {
+				fmt.Println("It was this.")
+				log.Fatal(err)
+			}
+
+			for _, record := range records {
+
+				if record.Name == theHostname {
+					recordID = record.ID
+					break
+				}
+			}
+
+			_, err = linodeClient.UpdateDomainRecord(context.Background(), domainID, recordID, linodego.DomainRecordUpdateOptions{Target: dIP})
+		} else if viper.GetString("provider") == "cloudflare" {
+
+			api, err := cloudflare.New(apiToken, viper.GetString("providerEmail"))
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			zoneID, err := api.ZoneIDByName(theDomain)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			recFilter := cloudflare.DNSRecord{Name: theHostname + "." + theDomain}
+			records, err := api.DNSRecords(zoneID, recFilter)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			fmt.Println("This record is: " + records[0].Name)
+			records[0].Content = dIP
+			err = api.UpdateDNSRecord(zoneID, records[0].ID, records[0])
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			log.Fatal("Provider not supported.")
+		}
 	},
 }
 
