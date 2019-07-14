@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -15,6 +16,15 @@ var rootCmd = &cobra.Command{
 	Long: `The Cloud Unpacked Dynamic DNS tool (cu-ddns) sets up Linode as a DDNS 
 provider. Useful for networks with a changing IP address such as a home 
 network.`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+
+		logFile, err := os.OpenFile("/var/log/cu-ddns.log", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+		if err != nil {
+			log.Error("Error opening log file. Logging to stderr instead.")
+		} else {
+			log.SetOutput(logFile)
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

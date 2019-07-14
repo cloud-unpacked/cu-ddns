@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +30,7 @@ var stopCmd = &cobra.Command{
 		}
 
 		fmt.Println("cu-ddns will no longer run automatically.")
-
+		log.Info("Hourly cron disabled.")
 	},
 }
 
