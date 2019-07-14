@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 
@@ -12,6 +11,7 @@ import (
 
 	"github.com/cloudflare/cloudflare-go"
 	"github.com/linode/linodego"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -130,6 +130,8 @@ var runCmd = &cobra.Command{
 		} else {
 			log.Fatal("Provider not supported.")
 		}
+
+		log.Info("Successfully updated " + viper.GetString("provider") + " the IP: " + dIP)
 	},
 }
 

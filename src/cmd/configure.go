@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -84,6 +85,8 @@ This will configure:
 		if err != nil {
 			fmt.Println(err)
 		}
+
+		log.Info("Configuration complete.")
 	},
 }
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +31,7 @@ var startCmd = &cobra.Command{
 		}
 
 		fmt.Println("cu-ddns has been set to run hourly.")
-
+		log.Info("Hourly cron enabled.")
 	},
 }
 
