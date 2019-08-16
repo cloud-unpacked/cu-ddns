@@ -65,14 +65,17 @@ sudo cu-ddns configure
 sudo cu-ddns start
 ```
 
+### Cloudflare
+
+When creating the Cloudflare API token, the following permissions are needed: `All zones - Zone:Edit, DNS:Edit`.
+
 
 ## Features
 
-*Multiple Providers* - This is currently a lie.
-Linode DNS is supported with DigitalOcean DNS next on the list.
+*Multiple Providers* - Linode and Cloudflare are supported.
+DigitalOcean DNS next on the list.
 
-*IPv4/6 Support* - both IPv4 and IPv6 are supporting.
-Currently, you can't specifically choose though. Whichever is the default route/protocol of your local machine, that's what will be used.
+*IPv4/6 Support* - IPv4 is supported with IPv6 coming in the near future.
 
 
 ## License

@@ -105,9 +105,22 @@ var runCmd = &cobra.Command{
 			_, err = linodeClient.UpdateDomainRecord(context.Background(), domainID, recordID, linodego.DomainRecordUpdateOptions{Target: dIP})
 		} else if viper.GetString("provider") == "cloudflare" {
 
-			api, err := cloudflare.New(apiToken, viper.GetString("providerEmail"))
-			if err != nil {
-				log.Fatal(err)
+			var api *cloudflare.API
+
+			// backwards compatibility support for the old Cloudflare key/email combo
+			// will remove somewhere down the line, likely before v1.0 release
+			if viper.IsSet("providerEmail") {
+
+				api, err = cloudflare.New(apiToken, viper.GetString("providerEmail"))
+				if err != nil {
+					log.Fatal(err)
+				}
+			} else {
+
+				api, err = cloudflare.NewWithAPIToken(apiToken)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 
 			zoneID, err := api.ZoneIDByName(theDomain)

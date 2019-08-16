@@ -54,28 +54,18 @@ This will configure:
 		survey.AskOne(q2, &apiToken, survey.WithValidator(survey.Required))
 		viper.Set("providerToken", apiToken)
 
-		if provider == "cloudflare" {
-
-			providerEmail := ""
-			q3 := &survey.Input{
-				Message: "Enter your Cloudflare email address:",
-			}
-			survey.AskOne(q3, &providerEmail, survey.WithValidator(survey.Required))
-			viper.Set("providerEmail", providerEmail)
-		}
-
 		domainName := ""
-		q4 := &survey.Input{
+		q3 := &survey.Input{
 			Message: "Enter the domain name portion of the hostname to configure. For example, if the hostname is home.example.com, enter example.com:",
 		}
-		survey.AskOne(q4, &domainName, survey.WithValidator(survey.Required))
+		survey.AskOne(q3, &domainName, survey.WithValidator(survey.Required))
 		viper.Set("domainname", domainName)
 
 		arecord := ""
-		q5 := &survey.Input{
+		q4 := &survey.Input{
 			Message: "Enter the A/AAAA portion of the hostname. For example, if the hostname is home.example.com, enter home:",
 		}
-		survey.AskOne(q5, &arecord, survey.WithValidator(survey.Required))
+		survey.AskOne(q4, &arecord, survey.WithValidator(survey.Required))
 		viper.Set("arecord", arecord)
 
 		// Below is neccessary due to an unmerged PR in Viper
