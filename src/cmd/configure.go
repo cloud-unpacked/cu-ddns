@@ -68,10 +68,7 @@ This will configure:
 		survey.AskOne(q4, &arecord, survey.WithValidator(survey.Required))
 		viper.Set("arecord", arecord)
 
-		// Below is neccessary due to an unmerged PR in Viper
-		// https://github.com/spf13/viper/pull/450
-		//err := viper.SafeWriteConfig()
-		err := viper.WriteConfig()
+		err := viper.SafeWriteConfig()
 		if err != nil {
 			fmt.Println(err)
 		}
