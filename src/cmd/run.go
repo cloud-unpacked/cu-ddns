@@ -58,6 +58,17 @@ var runCmd = &cobra.Command{
 
 		dIP = string(body)
 
+		modeDryRun, err := cmd.Flags().GetBool("dry-run")
+		if err != nil {
+			log.Error("Failed to retrieve dry-run flag value.")
+		}
+
+		if modeDryRun {
+
+			fmt.Printf("The current public IP address is: %v", dIP)
+			return
+		}
+
 		// Below starts provider specific code. In the future, this is an area
 		// where separating out into functions and likely interfaces will be
 		// useful.
@@ -149,15 +160,7 @@ var runCmd = &cobra.Command{
 }
 
 func init() {
+
 	rootCmd.AddCommand(runCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// verifyCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// verifyCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	runCmd.Flags().Bool("dry-run", false, "Pretend to run but don't update provider")
 }
