@@ -6,6 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.0.2
 	github.com/Netflix/go-expect v0.0.0-20190729225929-0e00d9168667 // indirect
 	github.com/cloudflare/cloudflare-go v0.10.0
+	github.com/digitalocean/godo v1.20.0
 	github.com/dnaeon/go-vcr v1.0.1 // indirect
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/hinshun/vt10x v0.0.0-20180809195222-d55458df857c // indirect
