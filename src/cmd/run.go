@@ -10,6 +10,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/cloudflare/cloudflare-go"
+	"github.com/digitalocean/godo"
 	"github.com/linode/linodego"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -113,6 +114,10 @@ var runCmd = &cobra.Command{
 				}
 			}
 
+			if recordID == 0 {
+				log.Fatal("Record not found.")
+			}
+
 			_, err = linodeClient.UpdateDomainRecord(context.Background(), domainID, recordID, linodego.DomainRecordUpdateOptions{Target: dIP})
 		} else if viper.GetString("provider") == "cloudflare" {
 
@@ -151,6 +156,41 @@ var runCmd = &cobra.Command{
 			if err != nil {
 				log.Fatal(err)
 			}
+		} else if viper.GetString("provider") == "digitalocean" {
+
+			tokenSource := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: apiToken})
+			oauthClient := oauth2.NewClient(context.Background(), tokenSource)
+
+			doClient := godo.NewClient(oauthClient)
+			ctx := context.TODO()
+
+			opt := &godo.ListOptions{
+				Page:    1,
+				PerPage: 25,
+			}
+
+			records, _, err := doClient.Domains.Records(ctx, theDomain, opt)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			for _, record := range records {
+
+				if record.Name == theHostname {
+					recordID = record.ID
+					break
+				}
+			}
+
+			if recordID == 0 {
+				log.Fatal("Record not found.")
+			}
+
+			editRequest := &godo.DomainRecordEditRequest{
+				Data: dIP,
+			}
+
+			_, _, err = doClient.Domains.EditRecord(ctx, theDomain, recordID, editRequest)
 		} else {
 			log.Fatal("Provider not supported.")
 		}

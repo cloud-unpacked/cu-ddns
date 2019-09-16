@@ -26,7 +26,7 @@ This will configure:
 		provider := ""
 		q1 := &survey.Select{
 			Message: "Please choose a DNS provider:",
-			Options: []string{"Linode", "Cloudflare"},
+			Options: []string{"Linode", "Cloudflare", "DigitalOcean"},
 		}
 		survey.AskOne(q1, &provider, survey.WithValidator(survey.Required))
 		provider = strings.ToLower(provider)
@@ -39,6 +39,9 @@ This will configure:
 			break
 		case "cloudflare":
 			promptString = "Cloudflare API key"
+			break
+		case "digitalocean":
+			promptString = "DigitalOcean Personal Access Token"
 			break
 		}
 
