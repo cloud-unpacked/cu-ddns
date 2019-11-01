@@ -1,40 +1,57 @@
 version: 2.1
 
 executors:
-  cibuilds:
+  goreleaser:
     docker:
-      - image: cibuilds/goreleaser:0.110
+      - image: cibuilds/goreleaser:0.120
 
 workflows:
   main:
     jobs:
+      - test
+      - build-binaries
+      - build-snap:
+          name: "Build Snap"
+          requires:
+            - build-binaries
+          filters:
+            branches:
+              ignore: /^master$/
+      - build-snap:
+          name: "Build 'edge' Snap"
+          requires:
+            - build-binaries
+          filters:
+            branches:
+              only: /^master$/
+          publish-edge: true
+  release:
+    jobs:
       - test:
           filters:
+            branches:
+              ignore: /.*/
             tags:
               # Simplified SemVer regex
               only: /^v\d+\.\d+\.\d+$/
-      - publish-main:
-          requires:
-            - test
+      - build-binaries:
           filters:
             branches:
               ignore: /.*/
             tags:
               # Simplified SemVer regex
               only: /^v\d+\.\d+\.\d+$/
-      - publish-snap:
+          publish: true
+      - build-snap:
+          name: "Build 'stable' Snap"
           requires:
-            - publish-main
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              # Simplified SemVer regex
-              only: /^v\d+\.\d+\.\d+$/
+            - build-binaries
+          publish-stable: true
 
 jobs:
   test:
-    executor: cibuilds
+    docker:
+      - image: cimg/go:1.13
     steps:
       - checkout
       - restore_cache:
@@ -50,18 +67,38 @@ jobs:
           key: go-mod-v1
           paths:
             - "/go/pkg/mod"
-  publish-main:
-    executor: cibuilds
+  build-binaries:
+    parameters:
+      publish:
+        type: boolean
+        default: false
+    executor: goreleaser
     steps:
       - checkout
-      - run:
-          name: "Build & Publish with GoReleaser"
-          command: cd src && goreleaser
+      - unless:
+          condition: << parameters.publish >>
+          steps:
+            - run:
+                name: "Build Binaries with GoReleaser"
+                command: cd src && goreleaser --snapshot --skip-publish --rm-dist
+      - when:
+          condition: << parameters.publish >>
+          steps:
+            - run:
+                name: "Build Binaries & Publish with GoReleaser"
+                command: cd src && goreleaser
       - persist_to_workspace:
           root: "src"
           paths:
             - "dist"
-  publish-snap:
+  build-snap:
+    parameters:
+      publish-edge:
+        type: boolean
+        default: false
+      publish-stable:
+        type: boolean
+        default: false
     docker:
       - image: cibuilds/snapcraft:core18
     steps:
@@ -75,10 +112,23 @@ jobs:
             src/dist/cu-ddns_linux_amd64/cu-ddns version --short > VERSION
             snapcraft --target-arch=amd64 --destructive-mode
             snapcraft --target-arch=armhf --destructive-mode
-      - run:
-          name: "Publish to Snap Store"
-          command: |
-            # Snapcraft Tokens are valid for 1 year. This one expires June 16th, 2020
-            echo $SNAPCRAFT_TOKEN | base64 --decode --ignore-garbage | snapcraft login --with -
-            snapcraft push *amd64.snap --release stable
-            snapcraft push *armhf.snap --release stable
+      - when:
+          condition: << parameters.publish-edge >>
+          steps:
+            - run:
+                name: "Publish to Snap Store in the Edge Channel"
+                command: |
+                  # Snapcraft Tokens are valid for 1 year. This one expires June 16th, 2020
+                  echo $SNAPCRAFT_TOKEN | base64 --decode --ignore-garbage | snapcraft login --with -
+                  snapcraft push *amd64.snap --release=edge
+                  snapcraft push *armhf.snap --release=edge
+      - when:
+          condition: << parameters.publish-stable >>
+          steps:
+            - run:
+                name: "Publish to Snap Store in the Stable Channel"
+                command: |
+                  # Snapcraft Tokens are valid for 1 year. This one expires June 16th, 2020
+                  echo $SNAPCRAFT_TOKEN | base64 --decode --ignore-garbage | snapcraft login --with -
+                  snapcraft push *amd64.snap --release=stable
+                  snapcraft push *armhf.snap --release=stable
