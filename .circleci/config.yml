@@ -63,7 +63,7 @@ jobs:
             - "dist"
   publish-snap:
     docker:
-      - image: cibuilds/snapcraft:stable
+      - image: cibuilds/snapcraft:core18
     steps:
       - checkout
       - attach_workspace:
