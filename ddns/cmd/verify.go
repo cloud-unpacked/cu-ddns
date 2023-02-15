@@ -20,7 +20,7 @@ var verifyCmd = &cobra.Command{
 	Long: `Verify confirms that everything is working with cu-ddns.
 	It checks the config file, API token, and service status.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Checking your installation...\n")
+		fmt.Printf("Checking your installation...\n\n")
 
 		_, err := os.Stat("/etc/cu-ddns.yml")
 		if err != nil {

@@ -21,7 +21,7 @@ This will configure:
   - A/AAAA record
   - provider credentials`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Let's configure cu-ddns.\n")
+		fmt.Printf("Let's configure icu-ddns.\n\n")
 
 		provider := ""
 		q1 := &survey.Select{

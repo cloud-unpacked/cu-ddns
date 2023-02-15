@@ -1,9 +1,7 @@
 version: 2.1
 
-executors:
-  goreleaser:
-    docker:
-      - image: cibuilds/goreleaser:0.120
+orbs:
+  gor: hubci/goreleaser@2.1
 
 workflows:
   main:
@@ -52,9 +50,12 @@ jobs:
       publish:
         type: boolean
         default: false
-    executor: goreleaser
+    docker:
+      - image: cimg/go:1.19
     steps:
       - checkout
+      - gor/install:
+          version: "0.120.8"
       - unless:
           condition: << parameters.publish >>
           steps:
