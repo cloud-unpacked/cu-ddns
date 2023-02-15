@@ -4,27 +4,39 @@ orbs:
   gor: hubci/goreleaser@2.1
 
 workflows:
-  main:
+  main-wf:
     jobs:
       - test
-      - build-binaries
-  release:
+      - gor/release:
+          name: goreleaser-snapshot
+          version: "1.15.2"
+          go-version: "1.19.5"
+          dry-run: true
+          post-steps:
+            - persist_to_workspace:
+                root: "."
+                paths:
+                  - "dist"
+  release-wf:
     jobs:
       - test:
-          filters:
+          filters: &semverFilters
             branches:
               ignore: /.*/
             tags:
-              # Simplified SemVer regex
-              only: /^v\d+\.\d+\.\d+$/
-      - build-binaries:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              # Simplified SemVer regex
-              only: /^v\d+\.\d+\.\d+$/
-          publish: true
+              # SemVer regex
+              only: /^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/
+      - gor/release:
+          name: goreleaser-publish
+          version: "1.15.2"
+          go-version: "1.19.5"
+          filters: *semverFilters
+          post-steps:
+            - persist_to_workspace:
+                root: "."
+                paths:
+                  - "dist"
+          context: goreleaser-ctx
 
 jobs:
   test:
@@ -45,30 +57,3 @@ jobs:
           key: go-mod-v1
           paths:
             - "/go/pkg/mod"
-  build-binaries:
-    parameters:
-      publish:
-        type: boolean
-        default: false
-    docker:
-      - image: cimg/go:1.19
-    steps:
-      - checkout
-      - gor/install:
-          version: "0.120.8"
-      - unless:
-          condition: << parameters.publish >>
-          steps:
-            - run:
-                name: "Build Binaries with GoReleaser"
-                command: cd ddns && goreleaser --snapshot --skip-publish --rm-dist
-      - when:
-          condition: << parameters.publish >>
-          steps:
-            - run:
-                name: "Build Binaries & Publish with GoReleaser"
-                command: cd ddns && goreleaser
-      - persist_to_workspace:
-          root: "ddns"
-          paths:
-            - "dist"
