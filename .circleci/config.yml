@@ -10,21 +10,6 @@ workflows:
     jobs:
       - test
       - build-binaries
-      - build-snap:
-          name: "Build Snap"
-          requires:
-            - build-binaries
-          filters:
-            branches:
-              ignore: /^trunk$/
-      - build-snap:
-          name: "Build 'edge' Snap"
-          requires:
-            - build-binaries
-          filters:
-            branches:
-              only: /^master$/
-          publish-edge: true
   release:
     jobs:
       - test:
@@ -42,11 +27,6 @@ workflows:
               # Simplified SemVer regex
               only: /^v\d+\.\d+\.\d+$/
           publish: true
-      - build-snap:
-          name: "Build 'stable' Snap"
-          requires:
-            - build-binaries
-          publish-stable: true
 
 jobs:
   test:
@@ -91,44 +71,3 @@ jobs:
           root: "src"
           paths:
             - "dist"
-  build-snap:
-    parameters:
-      publish-edge:
-        type: boolean
-        default: false
-      publish-stable:
-        type: boolean
-        default: false
-    docker:
-      - image: cibuilds/snapcraft:core18
-    steps:
-      - checkout
-      - attach_workspace:
-          at: src
-      - run:
-          name: "Build Snaps for Each Architecture"
-          command: |
-            # Generate a version file that Snapcraft can use
-            src/dist/cu-ddns_linux_amd64/cu-ddns version --short > VERSION
-            snapcraft --target-arch=amd64 --destructive-mode
-            snapcraft --target-arch=armhf --destructive-mode
-      - when:
-          condition: << parameters.publish-edge >>
-          steps:
-            - run:
-                name: "Publish to Snap Store in the Edge Channel"
-                command: |
-                  # Snapcraft Tokens are valid for 1 year. This one expires June 16th, 2020
-                  echo $SNAPCRAFT_TOKEN | base64 --decode --ignore-garbage | snapcraft login --with -
-                  snapcraft push *amd64.snap --release=edge
-                  snapcraft push *armhf.snap --release=edge
-      - when:
-          condition: << parameters.publish-stable >>
-          steps:
-            - run:
-                name: "Publish to Snap Store in the Stable Channel"
-                command: |
-                  # Snapcraft Tokens are valid for 1 year. This one expires June 16th, 2020
-                  echo $SNAPCRAFT_TOKEN | base64 --decode --ignore-garbage | snapcraft login --with -
-                  snapcraft push *amd64.snap --release=stable
-                  snapcraft push *armhf.snap --release=stable
