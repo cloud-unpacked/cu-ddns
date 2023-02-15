@@ -1,12 +1,6 @@
-# Snapcraft
-*.snap
-/parts/
-/prime/
-/stage/
-
 # Binaries
-/src/cu-ddns
-/src/dist/
+/cu-ddns
+/dist/
 
 # Vagrant
 /.vagrant/
