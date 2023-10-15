@@ -10,9 +10,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var configureCmd = &cobra.Command{
-	Use:   "configure",
-	Short: "Setup hostname and provider credentials",
+var setupCmd = &cobra.Command{
+	Use:     "setup",
+	Aliases: []string{"configure"},
+	Short:   "Setup hostname and provider credentials",
 	Long: `Setup cu-ddns with the information and credentials it needs to
 operate.
 
@@ -84,5 +85,5 @@ This will configure:
 }
 
 func init() {
-	rootCmd.AddCommand(configureCmd)
+	rootCmd.AddCommand(setupCmd)
 }

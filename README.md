@@ -55,10 +55,10 @@ sudo dpkg -i cu-ddns_0.1.0_amd64.deb
 
 ## Configuring
 
-After installation, run the `configure` command to setup the client and the `start` command to start it running.
+After installation, run the `setup` command to setup the client and the `start` command to start it running.
 
 ```bash
-sudo cu-ddns configure
+sudo cu-ddns setup
 sudo cu-ddns start
 ```
 
