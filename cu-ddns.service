@@ -1,0 +1,14 @@
+[Unit]
+Description=Dynamic DNS service by Cloud Unpacked
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/cu-ddns
+Restart=on-failure
+SyslogIdentifier=cu-ddns
+StandardOutput=append:/var/log/cu-ddns.log
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target

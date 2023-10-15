@@ -18,8 +18,9 @@ builds:
 archives:
   - format: tar.gz
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}hf{{ end }}
+      {{ .ProjectName }}-v{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}hf{{ end }}
     files:
+      - ./README.md
       - LICENSE
       - README.md
 
@@ -36,6 +37,9 @@ nfpms:
       - systemd
       - cron
     bindir: /usr/bin
+    contents:
+    - src: "cu-ddns.service"
+      dst: "/lib/systemd/system/cu-ddns.service"
 
 checksum:
   name_template: "{{ .ProjectName }}-v{{ .Version }}-checksums.txt"
