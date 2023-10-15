@@ -27,14 +27,19 @@ var versionShort = false
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Print version information of cu-ddns",
+	Short: "Print version information for cu-ddns",
 	Run: func(cmd *cobra.Command, args []string) {
 
+		// This logic should be moved to Mage soon. Git only masters when building
 		if strings.HasPrefix(version, "dev") || strings.HasPrefix(version, "SNAPSHOT") {
-			hashString := string(gitHash)[:len(string(gitHash))-1]
-			version = "dev-" + hashString
+
+			if len(string(gitHash)) != 0 {
+				hashString := string(gitHash)[:len(string(gitHash))-1]
+				version = "dev-" + hashString
+			}
 		} else {
 			buildDate = ""
+			version = "v" + version
 		}
 
 		if versionShort {
@@ -42,9 +47,11 @@ var versionCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Println("Cloud Unpacked DynDNS")
+		fmt.Println("cu-ddns")
 		fmt.Println("Version: " + version)
-		fmt.Println("Date: " + buildDate)
+		if buildDate != "" {
+			fmt.Println("Date: " + buildDate)
+		}
 		fmt.Println("Platform: " + kernel + "/" + arch)
 	},
 }
