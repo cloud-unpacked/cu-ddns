@@ -1,6 +1,6 @@
 <div align="center">
 	<p>
-		<a href="https://slack.linodians.com">
+		<a href="https://www.CloudUnpacked.com">
 			<img alt="Cloud Unpacked" src="img/logo-badge-circle.svg" width="75" />
 		</a>
 	</p>
@@ -48,12 +48,6 @@ sudo dpkg -i cu-ddns_0.1.0_amd64.deb
 ```
 
 `0.1.0` and `amd64` may need to be replaced with your desired version and CPU architecture respectively.
-
-### Linux Snap
-
-If you install via Snap, some commands will need to be prefixed with `sudo`.
-
-More instructions coming soon.
 
 
 ## Configuring
