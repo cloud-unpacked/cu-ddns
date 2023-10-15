@@ -1,5 +1,9 @@
 project_name: cu-ddns
 
+before:
+  hooks:
+    - ./scripts/completions.sh
+
 builds:
   - dir: ddns
     goos:
@@ -18,13 +22,14 @@ builds:
 archives:
   - format: tar.gz
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}hf{{ end }}
+      {{ .ProjectName }}-v{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}hf{{ end }}
     files:
       - LICENSE
       - README.md
+      - completions/*
 
 nfpms:
-  - file_name_template: "{{ .ProjectName }}-{{ .Version }}-{{ .Arch }}{{ if .Arm }}hf{{ end }}"
+  - file_name_template: "{{ .ProjectName }}-v{{ .Version }}-{{ .Arch }}{{ if .Arm }}hf{{ end }}"
     vendor: "Cloud Unpacked"
     homepage: "https://www.CloudUnpacked.com"
     maintainer: "Ricardo N Feliciano <Ricardo@Feliciano.Tech>"
@@ -36,6 +41,19 @@ nfpms:
       - systemd
       - cron
     bindir: /usr/bin
+    contents:
+      - src: ./completions/cu-ddns.bash
+        dst: /usr/share/bash-completion/completions/cu-ddns
+        file_info:
+          mode: 0644
+      - src: ./completions/cu-ddns.fish
+        dst: /usr/share/fish/vendor_completions.d/cu-ddns.fish
+        file_info:
+          mode: 0644
+      - src: ./completions/cu-ddns.zsh
+        dst: /usr/share/zsh/vendor-completions/_cu-ddns
+        file_info:
+          mode: 0644
 
 checksum:
   name_template: "{{ .ProjectName }}-v{{ .Version }}-checksums.txt"
