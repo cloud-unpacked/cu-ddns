@@ -9,6 +9,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+var versionFl bool
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cu-ddns",
@@ -25,6 +27,14 @@ network.`,
 			log.SetOutput(logFile)
 		}
 	},
+	SilenceUsage: true,
+	Run: func(cmd *cobra.Command, args []string) {
+		if versionFl {
+			versionCmd.Run(cmd, []string{"--short"})
+		} else {
+			cmd.Help()
+		}
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -36,7 +46,9 @@ func Execute() {
 }
 
 func init() {
+
 	cobra.OnInitialize(initConfig)
+	rootCmd.Flags().BoolVar(&versionFl, "version", false, "runs version --short")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -51,12 +63,7 @@ func initConfig() {
 	viper.SetDefault("domainName", "")
 	viper.SetDefault("aRecord", "")
 
-	// If we're running within a Snap, change where we store the config
-	if snapDir := os.Getenv("SNAP_DATA"); snapDir != "" {
-		viper.SetConfigFile(snapDir + "/cu-ddns.yml")
-	} else {
-		viper.SetConfigFile("/etc/cu-ddns.yml")
-	}
+	viper.SetConfigFile("/etc/cu-ddns.yml")
 
 	viper.ReadInConfig()
 
