@@ -22,21 +22,19 @@ archives:
     files:
       - LICENSE
       - README.md
-    rlcp: true
 
 nfpms:
   - file_name_template: "{{ .ProjectName }}-{{ .Version }}-{{ .Arch }}{{ if .Arm }}hf{{ end }}"
     vendor: "Cloud Unpacked"
-    homepage: "https://Feliciano.Tech"
+    homepage: "https://www.CloudUnpacked.com"
     maintainer: "Ricardo N Feliciano <Ricardo@Feliciano.Tech>"
     description: "A Dynamic DNS client for VPS cloud providers."
     license: MIT
     formats:
       - deb
-    dependencies:
-      - cron
     recommends:
       - systemd
+      - cron
     bindir: /usr/bin
 
 checksum:
