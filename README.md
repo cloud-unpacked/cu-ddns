@@ -9,6 +9,7 @@
 </div>
 
 [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/cloud-unpacked/cu-ddns/trunk/LICENSE)
+![GitHub release (with filter)](https://img.shields.io/github/v/release/cloud-unpacked/cu-ddns)
 ![Mastodon Follow](https://img.shields.io/mastodon/follow/109867425182016614?domain=https%3A%2F%2Fnanobyte.cafe&style=flat&color=858AFA)
 [![Go Report Card](https://goreportcard.com/badge/github.com/cloud-unpacked/cu-ddns)](https://goreportcard.com/report/github.com/cloud-unpacked/cu-ddns)
 [![CI Status](https://dl.circleci.com/status-badge/img/gh/cloud-unpacked/cu-ddns/tree/trunk.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/cloud-unpacked/cu-ddns/tree/trunk)
