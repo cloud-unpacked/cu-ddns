@@ -8,7 +8,10 @@
 	<h3>a Dynamic DNS client for VPS cloud providers</h3>
 </div>
 
-[![Build Status](https://circleci.com/gh/cloud-unpacked/cu-ddns.svg?style=shield)](https://circleci.com/gh/cloud-unpacked/cu-ddns) [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/cloud-unpacked/cu-ddns/master/LICENSE) [![Follow @CloudUnpacked](https://img.shields.io/twitter/follow/CloudUnpacked.svg?label=Follow%20@CloudUnpacked)](https://twitter.com/intent/follow?screen_name=CloudUnpacked)
+[![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/cloud-unpacked/cu-ddns/trunk/LICENSE)
+![Mastodon Follow](https://img.shields.io/mastodon/follow/109867425182016614?domain=https%3A%2F%2Fnanobyte.cafe&style=flat&color=858AFA)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cloud-unpacked/cu-ddns)](https://goreportcard.com/report/github.com/cloud-unpacked/cu-ddns)
+[![CI Status](https://dl.circleci.com/status-badge/img/gh/cloud-unpacked/cu-ddns/tree/trunk.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/cloud-unpacked/cu-ddns/tree/trunk)
 
 ***This project is brand new and in alpha right now. You may notice a lack of polish and/or drastic changes.***
 
