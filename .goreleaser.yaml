@@ -7,6 +7,7 @@ builds:
     goarch:
       - amd64
       - arm
+      - arm64
     goarm:
       - 7
     ldflags:
@@ -17,14 +18,14 @@ builds:
 archives:
   - format: tar.gz
     name_template: >-
-      {{ .ProjectName }}_{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}
+      {{ .ProjectName }}_{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}hf{{ end }}
     files:
       - LICENSE
       - README.md
     rlcp: true
 
 nfpms:
-  - file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+  - file_name_template: "{{ .ProjectName }}-{{ .Version }}-{{ .Arch }}{{ if .Arm }}hf{{ end }}"
     vendor: "Cloud Unpacked"
     homepage: "https://Feliciano.Tech"
     maintainer: "Ricardo N Feliciano <Ricardo@Feliciano.Tech>"
